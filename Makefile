@@ -27,7 +27,7 @@
 PROJECT_NAME       ?= game
 RAYLIB_VERSION     ?= 3.0.0
 RAYLIB_API_VERSION ?= 300
-RAYLIB_PATH        ?= ~/Documents/Personal/gamedev/raylib
+RAYLIB_PATH        ?= /Users/pstalcup/Documents/Personal/gamedev/raylib
 
 # Define compiler path on Windows
 COMPILER_PATH      ?= C:/raylib/mingw/bin
@@ -200,7 +200,7 @@ CFLAGS += -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces
 ifeq ($(BUILD_MODE),DEBUG)
     CFLAGS += -g -O0
 else
-    CFLAGS += -s -O1
+    CFLAGS += -O1
 endif
 
 # Additional flags for compiler (if desired)
@@ -323,7 +323,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),OSX)
         # Libraries for OSX 10.9 desktop compiling
         # NOTE: Required packages: libopenal-dev libegl1-mesa-dev
-        LDLIBS = -framework OpenGL -framework IOKit -framework CoreVideo -framework OpenAL -framework Cocoa libraylib.a
+        LDLIBS = -framework OpenGL -framework IOKit -framework CoreVideo -framework OpenAL -framework Cocoa lib/libraylib.a
     endif
     ifeq ($(PLATFORM_OS),BSD)
         # Libraries for FreeBSD, OpenBSD, NetBSD, DragonFly desktop compiling
@@ -356,9 +356,8 @@ SRC_DIR = src
 OBJ_DIR = obj
 
 # Define all object files from source files
-SRC = $(call rwildcard, *.c, *.h)
-#OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJS ?= main.c
+SRC = $(call rwildcard,$(SRC_DIR), *.c, *.h)
+OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
@@ -395,7 +394,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     endif
     ifeq ($(PLATFORM_OS),OSX)
 		find . -type f -perm +ugo+x -delete
-		rm -f *.o
+		rm -f $(OBJ_DIR)/*.o
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_RPI)

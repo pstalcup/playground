@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include <stdio.h>
+#include "inc/grid.h"
 
 #define _GRID_WIDTH 16
 #define _GRID_HEIGHT 12
@@ -15,10 +16,7 @@ int mouseGridY = -1;
 
 int grid[_GRID_WIDTH][_GRID_HEIGHT];
 
-bool within(int min, int max, int val) {
-    return val >= min && val <= max;
-}
-
+Rectangle scaledScreen;
 
 void drawGrid(void) {
     for(int x = 0; x < gridWidth; ++x) {
@@ -39,6 +37,7 @@ void init(void) {
         }
     }
 
+    scaledScreen = (Rectangle) {0, 0, gridWidth, gridHeight}; 
     SetMouseScale(0.02, 0.02);
 }
 
@@ -47,7 +46,7 @@ void handleInputs(void) {
     mouseGridY = (int) GetMouseY(); 
 
     if (CheckCollisionPointRec(GetMousePosition(), scaledScreen)) {
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && ) {
+        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
             grid[mouseGridX][mouseGridY] = 0; 
         }
     }
@@ -57,8 +56,6 @@ int main(void) {
     InitWindow(screenWidth, screenHeight, "pstalcup test"); 
     SetTargetFPS(60); 
     init(); 
-
-    Rectangle scaledScreen = {0, 0, gridWidth, gridHeight}; 
 
     while(!WindowShouldClose()) {
 
