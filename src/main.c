@@ -2,19 +2,14 @@
 #include <stdio.h>
 #include "inc/grid.h"
 
-#define _GRID_WIDTH 16
-#define _GRID_HEIGHT 12
-
-const int gridWidth = _GRID_WIDTH;
-const int gridHeight = _GRID_HEIGHT;
-
 const int screenWidth = 800; 
 const int screenHeight = 600;
 
-int mouseGridX = -1; 
-int mouseGridY = -1; 
+int pathFindX = -1;
+int pathFindY = -1; 
 
-int grid[_GRID_WIDTH][_GRID_HEIGHT];
+int cellSize = 50; 
+int borderSize = 2; 
 
 Rectangle scaledScreen;
 
@@ -22,34 +17,55 @@ void drawGrid(void) {
     for(int x = 0; x < gridWidth; ++x) {
         for(int y = 0; y < gridHeight; ++y) {
             Color outline = (x == mouseGridX && y == mouseGridY) ? RED : BLACK;
-            Color fill = (grid[x][y] == 1) ? GREEN : WHITE; 
+            Color fill = WHITE; 
+            switch(gridCell(x, y)) {
+                case 1: fill = GREEN; break;
+                case 2: fill = RED; break; 
+            }
 
-            DrawRectangle(x * 50, y * 50, 50, 50, outline); 
-            DrawRectangle(x * 50 + 2, y * 50 + 2, 46, 46, fill);
+            DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, outline); 
+            DrawRectangle(x * cellSize + borderSize, y * cellSize + borderSize, cellSize, cellSize, fill);
         }
     }
 }
 
 void init(void) {
-    for(int x = 0; x < gridWidth; ++x) {
-        for(int y = 0; y < gridHeight; ++y) {
-            grid[x][y] = 1; 
-        }
-    }
-
     scaledScreen = (Rectangle) {0, 0, gridWidth, gridHeight}; 
     SetMouseScale(0.02, 0.02);
+    clearGrid(); 
 }
 
 void handleInputs(void) {
     mouseGridX = (int) GetMouseX(); 
     mouseGridY = (int) GetMouseY(); 
 
-    if (CheckCollisionPointRec(GetMousePosition(), scaledScreen)) {
+    bool insideScreen = CheckCollisionPointRec(GetMousePosition(), scaledScreen);
+    
+    if (insideScreen) {
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
-            grid[mouseGridX][mouseGridY] = 0; 
+            setGridCell(mouseGridX, mouseGridY, 0); 
         }
     }
+    if (IsKeyDown(KEY_A)) {
+        clearGrid();
+    }
+    if (IsKeyDown(KEY_S)) {
+        if(insideScreen) {
+            pathFind(0, 0, mouseGridX, mouseGridY); 
+        }
+    }
+}
+
+void update(void) {
+    if(pathFindX != -1) {
+    }
+}
+
+void drawFrame(void) {
+        BeginDrawing();
+            ClearBackground(RAYWHITE);
+            drawGrid(); 
+        EndDrawing();
 }
 
 int main(void) {
@@ -58,11 +74,9 @@ int main(void) {
     init(); 
 
     while(!WindowShouldClose()) {
-
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            drawGrid(); 
-        EndDrawing();
+        handleInputs(); 
+        update();
+        drawFrame();
     } 
     CloseWindow();
     return 0; 
