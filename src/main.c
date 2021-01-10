@@ -24,7 +24,7 @@ void drawGrid(void) {
             }
 
             DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize, outline); 
-            DrawRectangle(x * cellSize + borderSize, y * cellSize + borderSize, cellSize, cellSize, fill);
+            DrawRectangle(x * cellSize + borderSize, y * cellSize + borderSize, cellSize - borderSize * 2, cellSize - borderSize * 2, fill);
         }
     }
 }

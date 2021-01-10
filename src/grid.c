@@ -3,6 +3,7 @@
 
 #define _GRID_WIDTH 16
 #define _GRID_HEIGHT 12
+#define _GRID_SIZE _GRID_WIDTH * _GRID_HEIGHT
 
 int mouseGridX = -1; 
 int mouseGridY = -1; 
@@ -11,17 +12,17 @@ const int gridWidth = _GRID_WIDTH;
 const int gridHeight = _GRID_HEIGHT;
 const int gridSize = gridWidth * gridHeight;
 
-int grid[_GRID_WIDTH * _GRID_HEIGHT];
+// level data
+int grid[_GRID_SIZE];
+int collision[_GRID_SIZE] ;
 
-int distance[_GRID_WIDTH * _GRID_HEIGHT];
-int visited[_GRID_WIDTH * _GRID_HEIGHT]; 
-int path[_GRID_WIDTH * _GRID_HEIGHT]; 
-
-int pathX[_GRID_WIDTH * _GRID_HEIGHT]; 
-int pathY[_GRID_WIDTH * _GRID_HEIGHT]; 
+// path finding data
+int distance[_GRID_SIZE];
+int visited[_GRID_SIZE]; 
+int path[_GRID_SIZE];
 
 void clearGridForVal(int val) {
-    for(int i = 0; i < _GRID_WIDTH * _GRID_HEIGHT; ++i) {
+    for(int i = 0; i < gridSize; ++i) {
         if(grid[i] == val || val == -1) {
             grid[i] = 1; 
         }
@@ -47,7 +48,7 @@ void tryIndex(int index, int nextIndex, int computedDistance) {
     }
 }
 
-void pathFind(int startX, int startY, int endX, int endY) {
+void pathFindLimited(int startX, int startY, int endX, int endY, int width, int height) {
     clearGridForVal(2);
     int startIndex = startY * gridWidth + startX;
     int endIndex = endY * gridWidth + endX; 
@@ -66,10 +67,10 @@ void pathFind(int startX, int startY, int endX, int endY) {
         int computedDistance = distance[nextIndex] + 1;
         visited[nextIndex] = 1; 
 
-        int downIndex = nextIndex + gridWidth; 
-        int upIndex = nextIndex - gridWidth; 
+        int downIndex = nextIndex / gridWidth == height - 1 ? -1 : nextIndex + gridWidth; 
+        int upIndex = nextIndex / gridWidth == 0 ? -1 : nextIndex - gridWidth; 
         int leftIndex = nextIndex % gridWidth == 0 ? -1 : nextIndex - 1;
-        int rightIndex = nextIndex % gridWidth == gridWidth - 1 ? -1 : nextIndex + 1; 
+        int rightIndex = nextIndex % gridWidth == width - 1 ? -1 : nextIndex + 1; 
         
         tryIndex(downIndex, nextIndex, computedDistance);
         tryIndex(upIndex, nextIndex, computedDistance);
@@ -94,6 +95,10 @@ void pathFind(int startX, int startY, int endX, int endY) {
     do {
         grid[nextIndex] = 2; 
         nextIndex = path[nextIndex]; 
-    } while (nextIndex != -1);
-    
+    } while (nextIndex != -1);   
+}
+
+
+void pathFind(int startX, int startY, int endX, int endY) {
+    pathFindLimited(startX, startY, endX, endY, gridWidth, gridHeight);
 }
