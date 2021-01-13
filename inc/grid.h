@@ -9,4 +9,5 @@ extern int grid[];
 void clearGrid(void);
 int gridCell(int x, int y); 
 void setGridCell(int x, int y, int val); 
-void pathFind(int startX, int startY, int endX, int endY, int width, int height); 
+void pathFind(int startX, int startY, int endX, int endY); 
+void pathFindLimited(int startX, int startY, int endX, int endY, int width, int height);

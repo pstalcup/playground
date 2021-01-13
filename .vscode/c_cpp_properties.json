@@ -3,7 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "C:/raylib/raylib/src/**",
+                "/Users/pstalcup/Documents/Personal/gamedev/raylib/src/**",
                 "${workspaceFolder}/**"
             ],
             "defines": [
@@ -21,7 +21,7 @@
         {
             "name": "Mac",
             "includePath": [
-                "Users/pstalcup/Documents/Personal/gamedev/raylib/src/**",
+                "/Users/pstalcup/Documents/Personal/gamedev/raylib/src/**",
                 "${workspaceFolder}/**"
             ],
             "defines": [
