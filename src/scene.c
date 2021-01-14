@@ -15,7 +15,6 @@ void gameLoop(double delta) {
 
     if(sceneIndex == -1 && nextScene) {
         sceneChange = SCENE_UPDATE_PUSH; 
-        sceneStack[sceneIndex] = nextScene;
     }
 
     int curScene = sceneIndex;
