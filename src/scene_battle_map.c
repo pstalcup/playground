@@ -1,11 +1,19 @@
 #include "raylib.h"
 #include "inc/scene.h"
 #include "inc/grid.h"
+#include "inc/scene_battle_menu.h"
 
 Rectangle scaledScreen;
 
 int cellSize = 50; 
 int borderSize = 2; 
+
+int load(void) {
+    scaledScreen = (Rectangle) {0, 0, gridWidth, gridHeight}; 
+    SetMouseScale(0.02, 0.02);
+    clearGrid(); 
+    return 0;
+}
 
 void drawGrid(void) {
     for(int x = 0; x < gridWidth; ++x) {
@@ -23,18 +31,12 @@ void drawGrid(void) {
     }
 }
 
-int load(void) {
-    scaledScreen = (Rectangle) {0, 0, gridWidth, gridHeight}; 
-    SetMouseScale(0.02, 0.02);
-    clearGrid(); 
-    return 0;
-}
-
 int update(double delta) {
     mouseGridX = (int) GetMouseX(); 
     mouseGridY = (int) GetMouseY(); 
 
     bool insideScreen = CheckCollisionPointRec(GetMousePosition(), scaledScreen);
+    int retCode = 0; 
     
     if (insideScreen) {
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
@@ -49,14 +51,15 @@ int update(double delta) {
             pathFind(0, 0, mouseGridX, mouseGridY); 
         }
     }
-    return 0; // default behavior
+    if (IsKeyDown(KEY_M) && !battleMenu._loaded) {
+        nextScene = &battleMenu; 
+        retCode = SCENE_UPDATE_PUSH;
+    }
+    return retCode; // default behavior
 }
 
-void render(double delta) {
-        BeginDrawing();
-            ClearBackground(RAYWHITE);
-            drawGrid(); 
-        EndDrawing();
+void render() {
+    drawGrid(); 
 }
 
 int unload() {

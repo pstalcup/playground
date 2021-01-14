@@ -3,7 +3,7 @@
 
 typedef int (*load_cb_t)();
 typedef int (*update_cb_t)(double delta);
-typedef void (*render_cb_t)(double delta);
+typedef void (*render_cb_t)();
 typedef int (*unload_cb_t)();
 
 // this does not hold data for the scene. All this holds is call backs for the scene

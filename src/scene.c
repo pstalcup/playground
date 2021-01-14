@@ -1,4 +1,5 @@
 #include "inc/scene.h"
+#include "raylib.h"
 
 #define MAX_SCENE_STACK 10
 
@@ -48,37 +49,44 @@ void gameLoop(double delta) {
 
     ++curScene;
     // then render bottom up
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
     while(curScene <= sceneIndex) {
         if(sceneStack[curScene]->_render) {
-            sceneStack[curScene]->render_cb(delta);
+            sceneStack[curScene]->render_cb();
         }
         ++curScene; 
     }
+    EndDrawing();
     // finally, load the new scene if needed
     if(sceneChange != -1) {
         switch(sceneChange) {
             case SCENE_UPDATE_POP:
-                if(sceneChange == SCENE_UPDATE_UNLOAD) {
-                    sceneStack[curScene]->unload_cb();
+                if(sceneStack[sceneIndex]->_unload) {
+                    sceneStack[sceneIndex]->unload_cb();
+                    sceneStack[sceneIndex]->_loaded = 0; 
                 }
-                sceneIndex -= 1; 
+                --sceneIndex; 
                 break;
             case SCENE_UPDATE_SWITCH:
                 while(sceneIndex > -1) {
                     if(sceneStack[sceneIndex]->_unload) {
                         sceneStack[sceneIndex]->unload_cb();
+                        sceneStack[sceneIndex]->_loaded = 0; 
                     }
-                    sceneIndex--;
+                    --sceneIndex; 
                 }
                 sceneIndex = 0; 
+                sceneStack[sceneIndex] = nextScene; 
                 break;
             case SCENE_UPDATE_PUSH:
-                sceneIndex += 1; 
+                ++sceneIndex; 
+                sceneStack[sceneIndex] = nextScene; 
                 break;
         }
         if(nextScene != 0 && nextScene->_loaded == 0) {
             nextScene->load_cb(); 
-            sceneStack[sceneIndex] = nextScene; 
         }
+        nextScene = 0;
     }
 }

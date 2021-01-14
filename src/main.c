@@ -1,12 +1,10 @@
 #include "raylib.h"
+#include "inc/game.h"
 #include "inc/scene.h"
 #include "inc/scene_battle_map.h"
 
-const int screenWidth = 800; 
-const int screenHeight = 600;
-
 int main(void) {
-    InitWindow(screenWidth, screenHeight, "pstalcup test"); 
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "pstalcup test"); 
     SetTargetFPS(60); 
     nextScene = &battleMap; 
 
