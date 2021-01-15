@@ -27,7 +27,7 @@
 PROJECT_NAME       ?= game
 RAYLIB_VERSION     ?= 3.0.0
 RAYLIB_API_VERSION ?= 300
-RAYLIB_PATH        ?= C:/raylib/raylib
+RAYLIB_PATH        ?= ..\..
 
 # Define compiler path on Windows
 COMPILER_PATH      ?= C:/raylib/mingw/bin
@@ -54,7 +54,7 @@ RAYLIB_H_INSTALL_PATH ?= $(DESTDIR)/include
 RAYLIB_LIBTYPE        ?= STATIC
 
 # Build mode for project: DEBUG or RELEASE
-BUILD_MODE            ?= DEBUG
+BUILD_MODE            ?= RELEASE
 
 # Use external GLFW library instead of rglfw module
 # TODO: Review usage on Linux. Target version of choice. Switch on -lglfw or -lglfw3
@@ -200,7 +200,7 @@ CFLAGS += -Wall -std=c99 -D_DEFAULT_SOURCE -Wno-missing-braces
 ifeq ($(BUILD_MODE),DEBUG)
     CFLAGS += -g -O0
 else
-    CFLAGS += -O1
+    CFLAGS += -s -O1
 endif
 
 # Additional flags for compiler (if desired)
@@ -323,7 +323,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),OSX)
         # Libraries for OSX 10.9 desktop compiling
         # NOTE: Required packages: libopenal-dev libegl1-mesa-dev
-        LDLIBS = -framework OpenGL -framework IOKit -framework CoreVideo -framework OpenAL -framework Cocoa lib/libraylib.a
+        LDLIBS = -lraylib -framework OpenGL -framework OpenAL -framework Cocoa
     endif
     ifeq ($(PLATFORM_OS),BSD)
         # Libraries for FreeBSD, OpenBSD, NetBSD, DragonFly desktop compiling
@@ -356,8 +356,9 @@ SRC_DIR = src
 OBJ_DIR = obj
 
 # Define all object files from source files
-SRC = $(call rwildcard,$(SRC_DIR), *.c, *.h)
-OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+SRC = $(call rwildcard, *.c, *.h)
+#OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJS ?= main.c
 
 # For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
@@ -394,7 +395,7 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     endif
     ifeq ($(PLATFORM_OS),OSX)
 		find . -type f -perm +ugo+x -delete
-		rm -f $(OBJ_DIR)/*.o
+		rm -f *.o
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_RPI)
